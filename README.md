@@ -50,6 +50,14 @@ python pendu.py mon_fichier.txt
 
   DÉBUT programme
 
+    FONCTION accueil():
+        message d'accueil 
+        question "tu veux voir les regles" 
+        SI oui:
+            montrer les regles 
+        SI non:
+        charger_mots()/suite 
+
     FONCTION charger_mots(fichier) :
         SI fichier fourni en argument existe :
             ouvrir ce fichier

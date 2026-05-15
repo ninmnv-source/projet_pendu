@@ -1,4 +1,25 @@
-#jeu du pendu :
+
+def message_accueil():
+    print("=" * 50)
+    print("       BIENVENUE AU JEU DU PENDU")
+    print("=" * 50)
+
+    reponse = input("Voulez-vous voir les règles ? (répondez 'oui' ou 'non') : ").lower()
+    if reponse == "o": 
+        afficher_regles()
+
+    input("Appuie sur Entrée pour commencer...")
+    print()
+
+def afficher_regles():
+    print("""
+Règles du jeu :
+    - Un mot est choisi au hasard. 
+    - Tu as 6 chances.
+    - Chaque mauvaise lettre = -1 chance.
+    - Tu ne peux pas proposer la même lettre deux fois. 
+    - Les accents sont gérés automatiquement.
+  """)
 
 
 #%%

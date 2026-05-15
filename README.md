@@ -65,6 +65,7 @@ python pendu.py mon_fichier.txt
         remplacer é/è/ê → e, à/â → a, û → u, …
         RETOURNER la lettre sans accent
 
+
     FONCTION afficher_etat(mot, lettres_trouvees) :
         POUR chaque lettre du mot :
             SI sa version sans accent est dans lettres_trouvees :

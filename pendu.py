@@ -141,3 +141,18 @@ def jouer_partie(mot):
     else : 
         print(f'Perdu! Le mot était : {mot}')
 
+def main():
+      message_accueil()
+      mots = charger_mot()
+
+      while True:
+          mot = choisir_mot(mots)
+          jouer_partie(mot)
+
+          reponse = input("\nVeux-tu rejouer ? (oui/non) : ").strip().lower()
+          if reponse != "oui":
+              print("Merci d'avoir joué !")
+              break   
+
+if __name__ == "__main__":
+      main()

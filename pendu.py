@@ -9,8 +9,6 @@ def message_accueil():
     if reponse == "oui": 
         afficher_regles()
 
-    input("Appuie sur Entrée pour commencer...")
-    print()
 
 def afficher_regles():
     print("""
@@ -83,10 +81,19 @@ def donner_indice(mot, lettres_jouees):
     candidat = set(alphabet) - set(mot) - lettres_jouees
     if candidat :
         return random.choice(list(candidat))
+    indice_utilisé = True 
     return None
+
+def demander_lettre():
+      while True:
+          lettre = input("Propose une lettre : ").strip().lower()
+          if len(lettre) == 1 and lettre.isalpha():
+              return lettre
+          print("Ce n'est pas une lettre, réessaie.")
 
 
 def jouer_partie(mot):
+    indice_utilise = False 
     chance = 6
     lettres_trouvees = set()
     lettres_jouees = set()
@@ -104,20 +111,20 @@ def jouer_partie(mot):
         if chance >1 : 
             print(f'Chances restantes : {chance}')
         
-        if chance == 1 :
+        if chance == 1 and not indice_utilise :
             reponse = input('Dernière chance ! Veux-tu un indice ? (oui/non)').lower()
             if reponse == "oui":
                 indice = donner_indice(mot, lettres_jouees)
                 if indice : 
                     print(f"Indice : la lettre '{indice}' n'est pas dans le mot.")
                     lettres_jouees.add(indice)                   # pour qu'elle ne ressorte pas
-        
+            indice_utilise = True       #pour le pas proposer d'indice à l'infini 
                             
-        lettre = input("Propose une lettre : ").lower()         #on prend la lettre de l'utilisateur
+        lettre = demander_lettre()         #on prend la lettre de l'utilisateur
 
 #si lettre deja jouée on lui dit de donner une auttre lettre 
         if lettre in lettres_jouees:
-            print("Déjà essayée ! Change de lettre! /n ")
+            print("Déjà essayée ! Change de lettre!  ")
             continue                #sauter au tour suivant sans rien faire (redemander une lettre sans enelever de chance)
         lettres_jouees.add(lettre)
 
@@ -127,18 +134,10 @@ def jouer_partie(mot):
 
         else : 
             chance -=1
-            print("mauvaise lettre ! dommaaaage.. /n")
+            print("mauvaise lettre ! dommaaaage.. ")
         
     if chance > 0:
-        print(f'Gagné!  Le mot étai : {mot} /n')
+        print(f'Gagné!  Le mot étai : {mot} ')
     else : 
-        print(f'Perdu! Le mot était : {mot} /n')
+        print(f'Perdu! Le mot était : {mot}')
 
-def main():
-      message_accueil()
-      mots = charger_mot()
-      mot = choisir_mot(mots)
-      jouer_partie(mot)
-
-if __name__ == "__main__":
-      main()

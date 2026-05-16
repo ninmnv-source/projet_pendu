@@ -6,7 +6,7 @@ def message_accueil():
     print("=" * 50)
 
     reponse = input("Voulez-vous voir les règles ? (répondez 'oui' ou 'non') : ").lower()
-    if reponse == "o": 
+    if reponse == "oui": 
         afficher_regles()
 
     input("Appuie sur Entrée pour commencer...")
@@ -51,7 +51,7 @@ def charger_mot():
 
 
 # test rapide
-mots = charger_mot() #quand seule cette ligne est active, ca se lance, quand aucune ligne de test est active ca se lance pas)
+#mots = charger_mot() #quand seule cette ligne est active, ca se lance, quand aucune ligne de test est active ca se lance pas)
 #print(f"{len(mots)} mots chargés")
 #print(mots[:5])
 
@@ -77,6 +77,14 @@ def afficher_etat(mot, lettre_trouvees):
 #afficher_etat("carbone", {"c", "o", "e"})
 
 
+alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+def donner_indice(mot, lettres_jouees):
+    candidat = set(alphabet) - set(mot) - lettres_jouees
+    if candidat :
+        return random.choice(list(candidat))
+    return None
+
 
 def jouer_partie(mot):
     chance = 6
@@ -90,19 +98,26 @@ def jouer_partie(mot):
         mauvaises = lettres_jouees - set(mot)
 
         if mauvaises:                   #si mauvaises lettres existent deja et pas deja dans le mot
-            print(f"Lettres ratées : {', '.join(sorted(mauvaises))}")
-            #monter les lettres deja jouées affiché dans un ordre alphabet
+            print(f"Lettres ratées : {', '.join(sorted(mauvaises))}") #monter les lettres deja jouées affiché dans un ordre alphabet
+            
 
         if chance >1 : 
             print(f'Chances restantes : {chance}')
+        
         if chance == 1 :
-            print(f'Chance restante : {chance}')
-
+            reponse = input('Dernière chance ! Veux-tu un indice ? (oui/non)').lower()
+            if reponse == "oui":
+                indice = donner_indice(mot, lettres_jouees)
+                if indice : 
+                    print(f"Indice : la lettre '{indice}' n'est pas dans le mot.")
+                    lettres_jouees.add(indice)                   # pour qu'elle ne ressorte pas
+        
+                            
         lettre = input("Propose une lettre : ").lower()         #on prend la lettre de l'utilisateur
 
 #si lettre deja jouée on lui dit de donner une auttre lettre 
         if lettre in lettres_jouees:
-            print("Déjà essayée ! Change de lettre! ")
+            print("Déjà essayée ! Change de lettre! /n ")
             continue                #sauter au tour suivant sans rien faire (redemander une lettre sans enelever de chance)
         lettres_jouees.add(lettre)
 
@@ -112,12 +127,18 @@ def jouer_partie(mot):
 
         else : 
             chance -=1
-            print("mauvaise lettre ! dommaaaage..")
+            print("mauvaise lettre ! dommaaaage.. /n")
         
     if chance > 0:
-        print(f'Gagné!  Le mot étai : {mot}')
+        print(f'Gagné!  Le mot étai : {mot} /n')
     else : 
-        print(f'Perdu! Le mot était : {mot}')
+        print(f'Perdu! Le mot était : {mot} /n')
 
+def main():
+      message_accueil()
+      mots = charger_mot()
+      mot = choisir_mot(mots)
+      jouer_partie(mot)
 
-jouer_partie("chat")
+if __name__ == "__main__":
+      main()

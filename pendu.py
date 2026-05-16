@@ -115,19 +115,26 @@ def donner_indice(mot, lettres_jouees):
 def demander_lettre():
       while True:
           lettre = input("Propose une lettre : ").strip().lower()
+          print("")
+          print("")
           if len(lettre) == 1 and lettre.isalpha():
               return lettre
           print("Ce n'est pas une lettre, réessaie.")
 
 
 def jouer_partie(mot):
+
     indice_utilise = False 
     chance = 6
+    
+    print("=== TEST DESSIN OK ===")
     lettres_trouvees = set()
     lettres_jouees = set()
 
 #le temps qu'on a encore une chance et qu'on a pas trouvé le mot on continue la boucle 
     while chance >0 and set(mot) != lettres_trouvees :
+        print("\n" * 30)
+        dessiner_pendu(chance)
         afficher_etat(mot, lettres_trouvees)  #on apelle la fonction qui affiche l'état du mot
 
         if chance >1 : 
@@ -170,7 +177,70 @@ def jouer_partie(mot):
     if chance > 0:
         print(f'Gagné!  Le mot était : {mot} ')
     else : 
+        dessiner_pendu(0)
         print(f'Perdu! Le mot était : {mot}')
+
+
+def dessiner_pendu(chance):         #visuels pour le jeu
+    dessins = {
+        6: r"""
+     ╔═══════╗
+     ║       
+     ║       
+     ║       
+     ║       
+     ║       
+  ═══╩═══════════""",
+        5: r"""
+     ╔═══════╗
+     ║       ║
+     ║      (˙_˙)
+     ║       
+     ║       
+     ║       
+  ═══╩═══════════""",
+        4: r"""
+     ╔═══════╗
+     ║       ║
+     ║      (˙_˙)
+     ║       │
+     ║       
+     ║       
+  ═══╩═══════════""",
+        3: r"""
+     ╔═══════╗
+     ║       ║
+     ║      (°_°)
+     ║      /│
+     ║       
+     ║       
+  ═══╩═══════════""",
+        2: r"""
+     ╔═══════╗
+     ║       ║
+     ║      (°_°)
+     ║      /│\
+     ║       
+     ║       
+  ═══╩═══════════""",
+        1: r"""
+     ╔═══════╗
+     ║       ║
+     ║      (._.)
+     ║      /│\
+     ║      /
+     ║       
+  ═══╩═══════════""",
+        0: r"""
+     ╔═══════╗
+     ║       ║
+     ║      (×_×)
+     ║      /│\
+     ║      / \
+     ║       
+  ═══╩═══════════""",
+    }
+    print(dessins[chance])
 
 def main():
       message_accueil()

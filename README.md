@@ -1,14 +1,14 @@
 # Jeu du Pendu
 
 Mini-projet du cours **MGA802 – Introduction à la programmation avec Python** (ÉTS).
-Implémentation en Python du célèbre jeu du pendu, jouable dans le terminal contre l'ordinateur.
+Implémentation en Python du jeu du pendu, jouable dans le terminal contre l'ordinateur.
 
 ## Contenu du dépôt
 
 | Fichier | Description |
 |---|---|
 | `pendu.py` | Script Python contenant le jeu (organisé en fonctions). |
-| `MotsPendu.txt` | Liste de mots utilisée par défaut pour tirer un mot au hasard. |
+| `mots_pendu.txt` | Liste de mots utilisée par défaut pour tirer un mot au hasard. |
 | `README.md` | Ce fichier : description du projet et mode d'emploi. |
 
 ## Prérequis
@@ -23,113 +23,133 @@ Depuis le dossier du projet, lancer :
 python pendu.py
 ```
 
-Le programme utilise par défaut le fichier `MotsPendu.txt`. Pour fournir votre propre liste de mots (un mot par ligne), passer le chemin en argument :
-
-```bash
-python pendu.py mon_fichier.txt
-```
+Le programme propose au démarrage d'utiliser le fichier par défaut (`mots_pendu.txt`) ou de fournir le chemin de votre propre fichier (un mot par ligne).
 
 ## Règles du jeu
 
 - Le programme tire un mot au hasard dans le fichier de mots.
 - Le joueur dispose de **6 chances** pour deviner le mot, lettre par lettre.
-- À chaque tour, l'état du mot est affiché avec des `_` pour les lettres non trouvées.
+- À chaque tour, l'état du mot est affiché avec des `_` pour les lettres non trouvées, accompagné d'un dessin du pendu.
 - Une lettre incorrecte fait perdre une chance.
+- Une lettre déjà essayée ne fait pas perdre de chance — il faut en proposer une autre.
 - La partie se termine lorsque le mot est trouvé (**gagné**) ou que les chances tombent à zéro (**perdu**).
 - À la fin de la partie, le joueur peut choisir de **recommencer** ou de **quitter**.
 
 ## Fonctionnalités
 
 - Sélection aléatoire d'un mot depuis un fichier texte.
-- Gestion des accents : les lettres accentuées (é, è, ê, à, â, û, …) sont reconnues à partir de leur équivalent sans accent (e, a, u, …).
+- Gestion des accents et caractères spéciaux : les lettres accentuées (é, è, ê, à, â, û, ç, …) sont reconnues à partir de leur équivalent sans accent (e, a, u, c, …). Les mots composés (`week-end`) sont aussi traités comme un seul bloc (`weekend`).
 - Possibilité de fournir son propre fichier de mots.
+- Validation de la saisie (un seul caractère alphabétique).
+- Dessin du pendu en ASCII qui évolue avec le nombre de chances restantes.
 - Proposition de rejouer à la fin de chaque partie.
-- **Bonus** : lorsqu'il ne reste qu'une seule chance, le programme propose un indice (une lettre qui n'appartient pas au mot).
+- **Bonus** : lorsqu'il ne reste qu'une seule chance, le programme propose un indice (une lettre qui n'appartient pas au mot), utilisable une seule fois par partie.
 
-## Pseudo Code 
+## Pseudo-code
 
-  DÉBUT programme
+```
+DÉBUT programme
 
-    FONCTION accueil():
-        message d'accueil 
-        question "tu veux voir les regles" 
-        SI oui:
-            montrer les regles 
-        SI non:
-        charger_mots()/suite 
+    FONCTION message_accueil() :
+        afficher le titre du jeu
+        demander "Voulez-vous voir les règles ? (oui/non)"
+        SI oui :
+            appeler afficher_regles()
 
-    FONCTION charger_mots(fichier) :
-        SI fichier fourni en argument existe :
-            ouvrir ce fichier
+    FONCTION afficher_regles() :
+        afficher la liste des règles
+
+    FONCTION charger_mot() :
+        demander "Voulez-vous utiliser votre propre fichier ? (oui/non)"
+        SI oui :
+            demander le chemin du fichier
         SINON :
-            ouvrir "MotsPendu.txt" (fichier par défaut)
-        lire toutes les lignes → liste de mots
-        RETOURNER la liste
+            utiliser "mots_pendu.txt" (fichier par défaut)
+        ouvrir le fichier en UTF-8
+        lire chaque ligne et la nettoyer
+        RETOURNER la liste des mots non vides
+
+    FONCTION normaliser(mot) :
+        passer le mot en minuscules
+        POUR chaque caractère :
+            SI c'est un caractère accentué/spécial :
+                le remplacer par son équivalent sans accent
+            SI c'est un tiret ou un espace :
+                le supprimer
+        RETOURNER le mot normalisé
 
     FONCTION choisir_mot(liste_de_mots) :
-        RETOURNER un mot tiré au hasard (random.choice)
-
-    FONCTION enlever_accents(lettre) :
-        remplacer é/è/ê → e, à/â → a, û → u, …
-        RETOURNER la lettre sans accent
-
+        tirer un mot au hasard avec random.choice
+        RETOURNER le mot normalisé
 
     FONCTION afficher_etat(mot, lettres_trouvees) :
         POUR chaque lettre du mot :
-            SI sa version sans accent est dans lettres_trouvees :
-                afficher la lettre
+            SI la lettre est dans lettres_trouvees :
+                ajouter la lettre à l'affichage
             SINON :
-                afficher "_"
+                ajouter "_" à l'affichage
+        afficher le résultat avec un espace entre chaque caractère
+
+    FONCTION donner_indice(mot, lettres_jouees) :
+        candidats ← lettres de l'alphabet, sauf celles du mot, sauf celles déjà jouées
+        SI candidats non vide :
+            RETOURNER une lettre tirée au hasard parmi les candidats
+        SINON :
+            RETOURNER rien
 
     FONCTION demander_lettre() :
-        Demandeer une lettre
-        lire la lettre saisie par l'utilisateur
-        vérifier qu'elle est valide et pas déjà jouée
-        SI deja jouée : 
-            lui dire quelle est déjà jouée et redemander une lettre
-        RETOURNER la lettre (sans accent)
+        RÉPÉTER :
+            demander une lettre à l'utilisateur
+            SI c'est un seul caractère alphabétique :
+                RETOURNER la lettre
+            SINON :
+                avertir et redemander
 
-    FONCTION donner_indice(mot, lettres_deja_jouees) :     # bonus
-        choisir une lettre de l'alphabet
-        qui n'est pas dans le mot
-        ET qui n'a pas déjà été jouée
-        RETOURNER cette lettre
+    FONCTION dessiner_pendu(chance) :
+        afficher le dessin ASCII correspondant au nombre de chances
 
     FONCTION jouer_partie(mot) :
-        chances ← 6
-        lettres_trouvees ← {}
-        lettres_jouees ← {}
+        indice_utilise ← Faux
+        chance ← 6
+        lettres_trouvees ← ensemble vide
+        lettres_jouees ← ensemble vide
 
-        TANT QUE chances > 0 ET mot pas entièrement deviné :
+        TANT QUE chance > 0 ET mot pas entièrement deviné :
+            dessiner_pendu(chance)
             afficher_etat(mot, lettres_trouvees)
-            afficher chances restantes
+            afficher les chances restantes
 
-            SI chances == 1 :                              # bonus
-                proposer un indice à l'utilisateur
+            SI chance == 1 ET indice pas encore utilisé :
+                proposer un indice
+                marquer l'indice comme utilisé
 
-            lettre ← demander_lettre(lettres_jouees)
+            afficher les lettres ratées s'il y en a
+            lettre ← demander_lettre()
+
+            SI lettre déjà jouée :
+                avertir et passer au tour suivant sans perdre de chance
+
             ajouter lettre à lettres_jouees
-
-            SI lettre est dans le mot (version sans accent) :
+            SI lettre dans le mot :
                 ajouter lettre à lettres_trouvees
-                afficher "Bien joué !"
             SINON :
-                chances ← chances - 1
-                afficher "Raté !"
+                chance ← chance - 1
 
-        SI mot entièrement deviné :
+        SI chance > 0 :
             afficher "Gagné ! Le mot était : <mot>"
         SINON :
+            dessiner le pendu final
             afficher "Perdu ! Le mot était : <mot>"
 
     FONCTION main() :
-        mots ← charger_mots(argument éventuel)
+        message_accueil()
+        mots ← charger_mot()
         RÉPÉTER :
             mot ← choisir_mot(mots)
             jouer_partie(mot)
-            demander "Voulez-vous rejouer ? (o/n)"
-        TANT QUE réponse == "o"
+            demander "Veux-tu rejouer ? (oui/non)"
+        TANT QUE réponse != "non"
         afficher "Merci d'avoir joué !"
 
-  FIN programme
-
+FIN programme
+```
